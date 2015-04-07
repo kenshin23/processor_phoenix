@@ -32,4 +32,9 @@ defmodule UpPlug do
       })
     }
   end
+
+  test "is_csv? returns true if upload file is a csv file", context do
+    assert is_image?(context[:sample_csv_plug]) == true
+  end
+
 end
