@@ -1,0 +1,23 @@
+<%= form_for @changeset, @action, fn f -> %>
+  <%= if @changeset.errors != [] do %>
+    <p style="color: red">Oops, something went wrong!</p>
+  <% end %>
+
+  <p>
+    <label>
+      <span>FileName:</span>
+      <%= text_input f, :file_name %>
+    </label>
+  </p>
+
+  <p>
+    <label>
+      <span>FileSize:</span>
+      <%= number_input f, :file_size %>
+    </label>
+  </p>
+
+  <p>
+    <%= submit "Submit" %>
+  </p>
+<% end %>

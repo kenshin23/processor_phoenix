@@ -1,0 +1,24 @@
+<h2>Listing documents</h2>
+
+<table>
+  <tr>
+    <th>FileName</th>
+    <th>FileSize</th>
+
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+<%= for document <- @documents do %>
+  <tr>
+    <td><%= document.file_name %></td>
+    <td><%= document.file_size %></td>
+
+    <td><%= link "Show", to: document_path(@conn, :show, document) %></td>
+    <td><%= link "Edit", to: document_path(@conn, :edit, document) %></td>
+    <td><%= link "Delete", to: document_path(@conn, :delete, document), method: :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= link "New document", to: document_path(@conn, :new) %>

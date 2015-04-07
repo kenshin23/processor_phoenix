@@ -1,0 +1,17 @@
+<h2>Show document</h2>
+
+<ul>
+
+  <li>
+    <strong>FileName:</strong>
+    <%= @document.file_name %>
+  </li>
+
+  <li>
+    <strong>FileSize:</strong>
+    <%= @document.file_size %>
+  </li>
+
+</ul>
+
+<%= link "Back", to: document_path(@conn, :index) %>
