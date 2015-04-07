@@ -3,7 +3,7 @@ defmodule Processor.DocumentController do
 
   alias Processor.Document
 
-  plug :scrub_params, "document" when action in [:create, :update]
+  #plug :scrub_params, "document" when action in [:create, :update]
   plug :action
 
   def index(conn, _params) do
