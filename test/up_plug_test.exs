@@ -33,8 +33,12 @@ defmodule UpPlugTest do
     }
   end
 
-  test "is_csv? returns true if upload file is a csv file", context do
+  test "is_csv? returns true if uploaded file is a csv file", context do
     assert is_csv?(context[:sample_csv_plug]) == true
+  end
+
+  test "is_csv? returns false if uploaded file is not an csv file", context do
+    refute is_csv?(context[:sample_image_plug])
   end
 
 end
