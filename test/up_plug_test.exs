@@ -59,4 +59,11 @@ defmodule UpPlugTest do
     assert model.updated_at.__struct__ == Ecto.DateTime
   end
 
+  test "Uploaded file is stored in uploads folder", context do
+    process_upload_plug(context[:csv_up_plug])
+    expected_original_file_path = \
+      "#{Mix.Project.app_path}/priv/static/uploads/0001/#{assign_filename(1, Ecto.DateTime.utc)}"
+    assert File.exists?(expected_original_file_path)
+  end
+
 end

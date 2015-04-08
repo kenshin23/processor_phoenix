@@ -10,11 +10,19 @@ defmodule UpPlug do
     Enum.find_index(csv_mimes, fn(x) -> x == content_type end) != nil
   end
 
-  def assign_filename(id, dt) do
+  def format_id(id) do
     if id != nil do
-      formatted_id = :io_lib.format("~4..0B", [id])
+      :io_lib.format("~4..0B", [id])
         |> List.flatten
         |> to_string
+    else
+      ""
+    end
+  end
+
+  def assign_filename(id, dt) do
+    if id != nil do
+      formatted_id = format_id(id)
       date_as_string = [
         dt.year, 
         :io_lib.format("~2..0B", [dt.month]), 
@@ -56,7 +64,34 @@ defmodule UpPlug do
   end
 
   def post_process_file(up_plug) do
-    # TODO
+    if up_plug.model.id do
+      attachment_directory_path = \
+        attachment_container_absolute_path(up_plug.model)
+      #File.rm_rf(attachment_directory_path)
+      if not File.exists?(attachment_directory_path) do
+        File.mkdir_p(attachment_directory_path)
+      end
+      store_file(up_plug, attachment_directory_path)
+      if is_csv?(up_plug.plug) do
+        :ok
+      end
+    end
+  end
+
+  def store_file(up_plug, attachment_directory_path) do
+    File.copy(up_plug.plug.path, Enum.join( \
+      [attachment_directory_path, assign_filename(up_plug.model.id, \
+        up_plug.model.created_at)], "/"), :infinity)
+  end
+
+  def attachment_container_relative_path(model) do
+    Enum.join(["uploads", \
+        format_id(model.id)], "/")
+  end
+
+  def attachment_container_absolute_path(model) do
+    Enum.join([Mix.Project.app_path, "priv/static",
+        attachment_container_relative_path(model)], "/")
   end
 
 end
