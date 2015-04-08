@@ -19,6 +19,9 @@ defmodule Processor.DocumentController do
   def create(conn, %{"document" => document_params}) do
     changeset = Document.changeset(%Document{}, document_params)
 
+    IO.puts "Inspecting changeset...\n"
+    IO.inspect changeset
+
     if changeset.valid? do
       Repo.insert(changeset)
 
@@ -63,5 +66,17 @@ defmodule Processor.DocumentController do
     conn
     |> put_flash(:info, "Document deleted succesfully.")
     |> redirect(to: document_path(conn, :index))
+  end
+
+  defp upload_file_attachment(document, params, attachment_attribute_name) do
+    if (params[attachment_attribute_name] != nil and \
+            String.length(params[attachment_attribute_name].filename) > 0) do
+      document = UpPlug.process_upload_plug(%UpPlug{
+        model: document,
+        plug: params[attachment_attribute_name]
+      })
+      document = Map.delete(document, :photo)
+      Repo.update(document)
+    end
   end
 end
