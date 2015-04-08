@@ -1,7 +1,14 @@
-<%= form_for @changeset, @action, fn f -> %>
+<%= form_for @changeset, @action, [multipart: true], fn f -> %>
   <%= if @changeset.errors != [] do %>
     <p style="color: red">Oops, something went wrong!</p>
   <% end %>
+
+  <p>
+    <label>
+      <span>File:</span>
+      <%= file_input f, :upload_file %>
+    </label>
+  </p>
 
   <p>
     <label>

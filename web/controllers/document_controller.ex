@@ -3,7 +3,7 @@ defmodule Processor.DocumentController do
 
   alias Processor.Document
 
-  plug :scrub_params, "document" when action in [:create, :update]
+  #plug :scrub_params, "document" when action in [:create, :update]
   plug :action
 
   def index(conn, _params) do
@@ -20,7 +20,9 @@ defmodule Processor.DocumentController do
     changeset = Document.changeset(%Document{}, document_params)
 
     if changeset.valid? do
-      Repo.insert(changeset)
+      temp_doc = Repo.insert(changeset)
+      # Validate the uploaded file and populate model with updated values:
+      upload_file_attachment(temp_doc, changeset.params, "upload_file")
 
       conn
       |> put_flash(:info, "Document created succesfully.")
@@ -63,5 +65,19 @@ defmodule Processor.DocumentController do
     conn
     |> put_flash(:info, "Document deleted succesfully.")
     |> redirect(to: document_path(conn, :index))
+  end
+
+  defp upload_file_attachment(document, params, attachment_attribute_name) do
+    if (params[attachment_attribute_name] != nil and \
+            String.length(params[attachment_attribute_name].filename) > 0) do
+      document = UpPlug.process_upload_plug(%UpPlug{
+        model: document,
+        plug: params[attachment_attribute_name]
+      })
+      document = Map.delete(document, :upload_file)
+      Repo.update(document)
+    else
+      IO.puts "Failed to process file due to error."
+    end
   end
 end
