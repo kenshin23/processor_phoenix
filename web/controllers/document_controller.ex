@@ -19,11 +19,10 @@ defmodule Processor.DocumentController do
   def create(conn, %{"document" => document_params}) do
     changeset = Document.changeset(%Document{}, document_params)
 
-    IO.puts "Inspecting changeset...\n"
-    IO.inspect changeset
-
     if changeset.valid? do
-      Repo.insert(changeset)
+      doc = Repo.insert(changeset)
+      # Validate the uploaded file and populate model with updated values:
+      upload_file_attachment(doc, changeset.params, "upload_file")
 
       conn
       |> put_flash(:info, "Document created succesfully.")
@@ -69,14 +68,23 @@ defmodule Processor.DocumentController do
   end
 
   defp upload_file_attachment(document, params, attachment_attribute_name) do
+    IO.puts "Now uploading the file...\n"
+    IO.puts "Inspecting params.attachment_attribute_name:\n"
+    IO.inspect params[attachment_attribute_name]
     if (params[attachment_attribute_name] != nil and \
             String.length(params[attachment_attribute_name].filename) > 0) do
       document = UpPlug.process_upload_plug(%UpPlug{
         model: document,
         plug: params[attachment_attribute_name]
       })
-      document = Map.delete(document, :photo)
+
+      IO.puts "Inspecting document after upload_file_attachment"
+      IO.inspect document
+
+      document = Map.delete(document, :upload_file)
       Repo.update(document)
+    else
+      IO.puts "Failed to process file due to error."
     end
   end
 end
