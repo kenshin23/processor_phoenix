@@ -17,6 +17,7 @@ defmodule Processor.Router do
 
     get "/", PageController, :index
     resources "/documents", DocumentController
+    get "/documents/:id/process/:filename", DocumentController, :process, as: :process
   end
 
   # Other scopes may use custom stacks.

@@ -5,6 +5,7 @@ defmodule Processor.DocumentController do
 
   #plug :scrub_params, "document" when action in [:create, :update]
   plug :action
+  plug :render when action in [:create, :process]
 
   def index(conn, _params) do
     documents = Repo.all(Document)
@@ -21,15 +22,36 @@ defmodule Processor.DocumentController do
 
     if changeset.valid? do
       temp_doc = Repo.insert(changeset)
-      # Validate the uploaded file and populate model with updated values:
-      upload_file_attachment(temp_doc, changeset.params, "upload_file")
+      # Validate the uploaded file and update model with file values:
+      saved = upload_file_attachment(temp_doc, changeset.params, "upload_file")
 
       conn
       |> put_flash(:info, "Document created succesfully.")
-      |> redirect(to: document_path(conn, :index))
+      #|> redirect(to: document_path(conn, :index))
+      |> assign(:id, saved.id)
+      |> assign(:filename, saved.file_name)
+      |> redirect(to: "/documents/#{saved.id}/process/#{saved.file_name}")
     else
       render conn, "new.html", changeset: changeset
     end
+  end
+
+  # def process(conn, %{"id" => id, "filename" => filename}) do
+    # TODO
+  # end
+
+  def process(conn, %{"id" => id, "filename" => filename}) do
+    html conn, """
+       <html>
+         <head>
+            <title>Passing parameters</title>
+         </head>
+         <body>
+           <p>You sent in id #{id}</p>
+           <p>You also sent in filename #{filename}</p>
+         </body>
+       </html>
+      """
   end
 
   def show(conn, %{"id" => id}) do
