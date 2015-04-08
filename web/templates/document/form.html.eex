@@ -3,28 +3,17 @@
     <p style="color: red">Oops, something went wrong!</p>
   <% end %>
 
+  <%= hidden_input f, :file_name, [value: "validate.me"] %>
+  <%= hidden_input f, :file_size, [value: 0] %>
+
   <p>
     <label>
-      <span>File:</span>
+      <span>Select the file to be scrubbed from here:</span>
       <%= file_input f, :upload_file %>
     </label>
   </p>
 
   <p>
-    <label>
-      <span>FileName:</span>
-      <%= text_input f, :file_name %>
-    </label>
-  </p>
-
-  <p>
-    <label>
-      <span>FileSize:</span>
-      <%= number_input f, :file_size %>
-    </label>
-  </p>
-
-  <p>
-    <%= submit "Submit" %>
+    <%= submit "Upload the file" %>
   </p>
 <% end %>
