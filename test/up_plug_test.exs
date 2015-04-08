@@ -41,4 +41,22 @@ defmodule UpPlugTest do
     refute is_csv?(context[:sample_image_plug])
   end
 
+  test "File is assigned name 0001_201504172045.csv if uploaded by user id 1 on 04/17/2015 at 8:45 pm" do
+    assert assign_filename(1, %Ecto.DateTime{day: 17, hour: 20, min: 45, month: 4, sec: 23, year: 2015}) == "0001_201504172045.csv"
+  end
+
+  test "File is assigned name 4321_201511010123.csv if uploaded by user id 4321 on 11/01/2015 at 1:23 am" do
+    assert assign_filename(4321, %Ecto.DateTime{day: 01, hour: 01, min: 23, month: 11, sec: 23, year: 2015}) == "4321_201511010123.csv"
+  end
+
+  test "assigns created_at attribute after saving the file", context do
+    model = process_upload_plug(context[:up_plug])
+    assert model.updated_at.__struct__ == Ecto.DateTime
+  end
+
+  test "assigns updated_at attribute after saving the file", context do
+    model = process_upload_plug(context[:up_plug])
+    assert model.updated_at.__struct__ == Ecto.DateTime
+  end
+
 end
