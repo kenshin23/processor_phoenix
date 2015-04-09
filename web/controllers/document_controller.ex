@@ -26,8 +26,8 @@ defmodule Processor.DocumentController do
       saved = upload_file_attachment(temp_doc, changeset.params, "upload_file")
 
       conn
-      |> put_flash(:info, "Document created succesfully.")
-      #|> redirect(to: document_path(conn, :index))
+     #|> put_flash(:info, "Document created succesfully.")
+     #|> redirect(to: document_path(conn, :index))
       |> assign(:id, saved.id)
       |> assign(:filename, saved.file_name)
       |> redirect(to: "/documents/#{saved.id}/process/#{saved.file_name}")
@@ -36,22 +36,9 @@ defmodule Processor.DocumentController do
     end
   end
 
-  # def process(conn, %{"id" => id, "filename" => filename}) do
-    # TODO
-  # end
-
   def process(conn, %{"id" => id, "filename" => filename}) do
-    html conn, """
-       <html>
-         <head>
-            <title>Passing parameters</title>
-         </head>
-         <body>
-           <p>You sent in id #{id}</p>
-           <p>You also sent in filename #{filename}</p>
-         </body>
-       </html>
-      """
+
+    render conn, "process.html", id: id, filename: filename
   end
 
   def show(conn, %{"id" => id}) do

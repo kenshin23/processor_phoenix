@@ -1,0 +1,5 @@
+<h2>Process document</h2>
+
+<p>Processing file <%= @filename %></p>
+
+<%= link "Back", to: document_path(@conn, :index) %>
