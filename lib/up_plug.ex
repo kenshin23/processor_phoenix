@@ -11,7 +11,12 @@ defmodule UpPlug do
 
   def format_id(id) do
     if id != nil do
-      :io_lib.format("~4..0B", [id])
+      if is_integer(id) do
+        valid_id = id
+      else
+        valid_id = String.to_integer(id)
+      end
+      :io_lib.format("~4..0B", [valid_id])
         |> List.flatten
         |> to_string
     else
@@ -65,7 +70,7 @@ defmodule UpPlug do
   def post_process_file(up_plug) do
     if up_plug.model.id do
       attachment_directory_path = \
-        attachment_container_absolute_path(up_plug.model)
+        attachment_container_absolute_path(up_plug.model.id)
       #File.rm_rf(attachment_directory_path)
       if not File.exists?(attachment_directory_path) do
         File.mkdir_p(attachment_directory_path)
@@ -83,14 +88,14 @@ defmodule UpPlug do
         up_plug.model.created_at)], "/"), :infinity)
   end
 
-  def attachment_container_relative_path(model) do
+  def attachment_container_relative_path(id) do
     Enum.join(["uploads", \
-        format_id(model.id)], "/")
+        format_id(id)], "/")
   end
 
-  def attachment_container_absolute_path(model) do
+  def attachment_container_absolute_path(id) do
     Enum.join([Mix.Project.app_path, "priv/static",
-        attachment_container_relative_path(model)], "/")
+        attachment_container_relative_path(id)], "/")
   end
 
 end

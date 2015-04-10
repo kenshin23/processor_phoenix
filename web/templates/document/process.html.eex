@@ -1,5 +1,7 @@
 <h2>Process document</h2>
 
-<p>Processing file <%= @filename %></p>
+<%= for line <- @contents do %>
+  <%= line %><br/>
+<% end %>
 
 <%= link "Back", to: document_path(@conn, :index) %>

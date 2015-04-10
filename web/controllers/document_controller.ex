@@ -5,7 +5,7 @@ defmodule Processor.DocumentController do
 
   #plug :scrub_params, "document" when action in [:create, :update]
   plug :action
-  plug :render when action in [:create, :process]
+  #plug :render when action in [:create, :process]
 
   def index(conn, _params) do
     documents = Repo.all(Document)
@@ -37,8 +37,10 @@ defmodule Processor.DocumentController do
   end
 
   def process(conn, %{"id" => id, "filename" => filename}) do
-
-    render conn, "process.html", id: id, filename: filename
+    abs_path = UpPlug.attachment_container_absolute_path(id)
+    file_result = ProcessCsv.get_file_contents(Enum.join([abs_path, filename], "/"))
+    contents = Enum.to_list(file_result)
+    render conn, "process.html", contents: contents
   end
 
   def show(conn, %{"id" => id}) do
